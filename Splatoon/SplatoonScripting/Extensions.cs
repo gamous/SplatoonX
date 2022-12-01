@@ -40,7 +40,7 @@ namespace Splatoon.SplatoonScripting
         /// <returns>Status VFX ID</returns>
         public static short GetStatusVFXId(this Character chara)
         {
-            return chara.Struct()->StatusEffectVFXId;
+            return chara.GetStatusVFXId();//StatusEffectVFXId;
         }
     }
 }
