@@ -70,7 +70,7 @@ namespace Splatoon.SplatoonScripting
         private static CSharpCompilation GenerateCode(string sourceCode, string identity = "Script")
         {
             var codeString = SourceText.From(sourceCode);
-            var options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp11);
+            var options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp9);
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(codeString, options);
 
