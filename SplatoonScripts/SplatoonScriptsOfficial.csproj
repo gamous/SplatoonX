@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
-    <ProjectReference Include="..\Splatoon\Splatoon.csproj" />
+    <ProjectReference Include="..\Splatoon\SplatoonX.csproj" />
   </ItemGroup>
 
   <ItemGroup>
