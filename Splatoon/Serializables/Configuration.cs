@@ -1,7 +1,7 @@
-﻿using Dalamud;
-using Dalamud.Configuration;
+﻿using Dalamud.Configuration;
 using Dalamud.Interface.Internal.Notifications;
 using Splatoon.Gui;
+using Splatoon.SplatoonScripting;
 using System.Threading;
 
 namespace Splatoon;
@@ -49,6 +49,8 @@ class Configuration : IPluginConfiguration
     public bool Logging = false;
 
     public string PluginLanguage = null;
+    public bool NoFindReset = false;
+    public bool NoCircleFix = false;
 
     public HashSet<string> DisabledScripts = new();
 
@@ -80,6 +82,10 @@ class Configuration : IPluginConfiguration
         else
         {
             Svc.PluginInterface.SavePluginConfig(this);
+            foreach(var x in ScriptingProcessor.Scripts)
+            {
+                Safe(x.Controller.SaveConfig);
+            }
         }
     }
 

@@ -2,7 +2,6 @@
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Game.Command;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface.Internal.Notifications;
@@ -45,7 +44,7 @@ public unsafe class Splatoon : IDalamudPlugin
     internal float CamAngleY;
     internal float CamZoom = 1.5f;
     internal bool prevMouseState = false;
-    internal SearchInfo SFind = null;
+    internal List<SearchInfo> SFind = new();
     internal int CurrentLineSegments;
     internal ConcurrentQueue<System.Action> tickScheduler;
     internal List<DynamicElement> dynamicElements;
@@ -84,6 +83,7 @@ public unsafe class Splatoon : IDalamudPlugin
     internal MapEffectProcessor mapEffectProcessor;
     internal TetherProcessor TetherProcessor;
     internal ObjectEffectProcessor ObjectEffectProcessor;
+    internal DirectorUpdateProcessor DirectorUpdateProcessor;
     internal HttpClient HttpClient;
 
     internal void Load(DalamudPluginInterface pluginInterface)
@@ -171,17 +171,18 @@ public unsafe class Splatoon : IDalamudPlugin
         mapEffectProcessor = new();
         TetherProcessor = new();
         ObjectEffectProcessor = new();
+        DirectorUpdateProcessor = new();
         ProperOnLogin.Register(delegate
         {
             ScriptingProcessor.TerritoryChanged();
         });
         Svc.ClientState.Logout += OnLogout;
-        ScriptingProcessor.TerritoryChanged();
-        ScriptingProcessor.ReloadAll();
         HttpClient = new()
         {
-            Timeout = TimeSpan.FromSeconds(20)
+            Timeout = TimeSpan.FromSeconds(10)
         };
+        ScriptingProcessor.TerritoryChanged();
+        ScriptingProcessor.ReloadAll();
         Init = true;
         SplatoonIPC.Init();
     }
@@ -217,6 +218,7 @@ public unsafe class Splatoon : IDalamudPlugin
         Safe(mapEffectProcessor.Dispose);
         Safe(TetherProcessor.Dispose);
         Safe(ObjectEffectProcessor.Dispose);
+        Safe(DirectorUpdateProcessor.Dispose);
         AttachedInfo.Dispose();
         ScriptingProcessor.Dispose();
         ECommonsMain.Dispose();
@@ -310,9 +312,9 @@ public unsafe class Splatoon : IDalamudPlugin
     internal void TerritoryChangedEvent(object sender, ushort e)
     {
         Phase = 1;
-        if (SFind != null)
+        if (SFind.Count > 0 && !P.Config.NoFindReset)
         {
-            SFind = null;
+            SFind.Clear();
             Notify.Info("Search stopped".Loc());
         }
         for (var i = dynamicElements.Count - 1; i >= 0; i--)
@@ -484,26 +486,29 @@ public unsafe class Splatoon : IDalamudPlugin
                     Profiler.MainTickFind.StartTick();
                 }
 
-                if (SFind != null)
+                if (SFind.Count > 0)
                 {
-                    var col = Environment.TickCount64 % 1000 < 500 ? Colors.Red : Colors.Yellow;
-                    var findEl = new Element(1)
+                    foreach (var obj in SFind)
                     {
-                        thicc = 3f,
-                        radius = 0f,
-                        refActorName = SFind.name,
-                        refActorObjectID = SFind.oid,
-                        refActorComparisonType = SFind.SearchAttribute,
-                        overlayText = "$NAME",
-                        overlayVOffset = 1.7f,
-                        overlayPlaceholders = true,
-                        overlayTextColor = col,
-                        color = col,
-                        includeHitbox = true,
-                        onlyTargetable = !SFind.includeUntargetable,
-                        tether = Config.TetherOnFind,
-                    };
-                    ProcessElement(findEl);
+                        var col = GradientColor.Get(Colors.Red.ToVector4(), Colors.Yellow.ToVector4(), 750);
+                        var findEl = new Element(1)
+                        {
+                            thicc = 3f,
+                            radius = 0f,
+                            refActorName = obj.name,
+                            refActorObjectID = obj.oid,
+                            refActorComparisonType = obj.SearchAttribute,
+                            overlayText = "$NAME",
+                            overlayVOffset = 1.7f,
+                            overlayPlaceholders = true,
+                            overlayTextColor = col.ToUint(),
+                            color = col.ToUint(),
+                            includeHitbox = true,
+                            onlyTargetable = !obj.includeUntargetable,
+                            tether = Config.TetherOnFind,
+                        };
+                        ProcessElement(findEl);
+                    }
                 }
 
                 ProcessS2W();
@@ -519,8 +524,8 @@ public unsafe class Splatoon : IDalamudPlugin
                     ProcessLayout(i);
                 }
 
-                ScriptingProcessor.Scripts.ForEach(x => x.Controller.Layouts.Values.Each(ProcessLayout));
-                ScriptingProcessor.Scripts.ForEach(x => x.Controller.Elements.Values.Each(x => ProcessElement(x)));
+                ScriptingProcessor.Scripts.ForEach(x => { if (x.IsEnabled) x.Controller.Layouts.Values.Each(ProcessLayout); });
+                ScriptingProcessor.Scripts.ForEach(x => { if (x.IsEnabled) x.Controller.Elements.Values.Each(x => ProcessElement(x)); });
                 foreach (var e in injectedElements)
                 {
                     ProcessElement(e);
@@ -971,22 +976,22 @@ public unsafe class Splatoon : IDalamudPlugin
         {
             if (e.refActorUseBuffTime)
             {
-                return c.StatusList.Where(x => x.RemainingTime.InRange(e.refActorBuffTimeMin, e.refActorBuffTimeMax)).Select(x => x.StatusId).ContainsAll(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
+                return c.StatusList.Where(x => x.RemainingTime.InRange(e.refActorBuffTimeMin, e.refActorBuffTimeMax) && (!e.refActorUseBuffParam || x.Param == e.refActorBuffParam)).Select(x => x.StatusId).ContainsAll(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
             }
             else
             {
-                return c.StatusList.Select(x => x.StatusId).ContainsAll(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
+                return c.StatusList.Where(x => !e.refActorUseBuffParam || x.Param == e.refActorBuffParam).Select(x => x.StatusId).ContainsAll(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
             }
         }
         else
         {
             if (e.refActorUseBuffTime)
             {
-                return c.StatusList.Where(x => x.RemainingTime.InRange(e.refActorBuffTimeMin, e.refActorBuffTimeMax)).Select(x => x.StatusId).ContainsAny(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
+                return c.StatusList.Where(x => x.RemainingTime.InRange(e.refActorBuffTimeMin, e.refActorBuffTimeMax) && (!e.refActorUseBuffParam || x.Param == e.refActorBuffParam)).Select(x => x.StatusId).ContainsAny(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
             }
             else
             {
-                return c.StatusList.Select(x => x.StatusId).ContainsAny(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
+                return c.StatusList.Where(x => !e.refActorUseBuffParam || x.Param == e.refActorBuffParam).Select(x => x.StatusId).ContainsAny(e.refActorBuffId).Invert(e.refActorRequireBuffsInvert);
             }
         }
     }
