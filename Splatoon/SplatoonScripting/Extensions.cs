@@ -34,7 +34,8 @@ public unsafe static class Extensions
     /// <returns>Status VFX ID</returns>
     public static short GetStatusVFXId(this Character chara)
     {
-        return chara.Struct()->StatusEffectVFXId;
+        Dalamud.SafeMemory.Read<short>(chara.Address + 0x1de, out var vfxid);
+        return vfxid;
     }
 
     /// <summary>

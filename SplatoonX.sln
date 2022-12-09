@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommons", "ECommons\ECommo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SplatoonScriptsOfficial", "SplatoonScripts\SplatoonScriptsOfficial.csproj", "{9062849B-30C3-4047-A8BC-2D61EBBCD11E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Splatoon", "Splatoon\Splatoon.csproj", "{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{9062849B-30C3-4047-A8BC-2D61EBBCD11E}.Release|Any CPU.ActiveCfg = Release|x64
 		{9062849B-30C3-4047-A8BC-2D61EBBCD11E}.Release|x64.ActiveCfg = Release|Any CPU
 		{9062849B-30C3-4047-A8BC-2D61EBBCD11E}.Release|x64.Build.0 = Release|Any CPU
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Debug|Any CPU.Build.0 = Debug|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Debug|x64.ActiveCfg = Debug|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Debug|x64.Build.0 = Debug|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Release|Any CPU.ActiveCfg = Release|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Release|Any CPU.Build.0 = Release|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Release|x64.ActiveCfg = Release|x64
+		{E1C7C64E-7FA8-4EB9-AD3B-F442B0F1DB97}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
