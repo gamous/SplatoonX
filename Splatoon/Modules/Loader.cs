@@ -108,8 +108,11 @@ internal class Loader
                     }
                     else
                     {
-                        PluginLog.Warning("Splatoon loading disallowed. Displaying confirmation window.");
-                        Svc.PluginInterface.UiBuilder.Draw += Draw;
+                        /*PluginLog.Warning("Splatoon loading disallowed. Displaying confirmation window.");
+                        Svc.PluginInterface.UiBuilder.Draw += Draw;*/
+                        PluginLog.Information("Splatoon loading allowed, continuing");
+                        Svc.Framework.Update += Load;
+                        File.WriteAllText(file, gVersion);
                     }
                 });
             }).Start();
