@@ -183,6 +183,16 @@ partial class CGui
                     {
                         ImGui.OpenPopup("GroupPopup");
                     }
+                    if (ImGui.IsItemClicked(ImGuiMouseButton.Middle))
+                    {
+                        foreach (var l in P.Config.LayoutsL)
+                        {
+                            if (l.Group == g)
+                            {
+                                l.Enabled = !l.Enabled;
+                            }
+                        }
+                    }
                     if (ImGui.BeginPopup("GroupPopup"))
                     {
                         ImGuiEx.Text($"[{g}]");
