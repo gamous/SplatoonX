@@ -45,7 +45,10 @@ internal partial class CGui
         if (el.type != 1)
         {
             ImGui.SameLine();
-            ImGui.Checkbox("Face me##" + i + k, ref el.FaceMe);
+            ImGui.Checkbox("Face##" + i + k, ref el.FaceMe);
+            ImGui.SameLine();
+            ImGui.SetNextItemWidth(100f);
+            ImGui.InputInt("##face" + i + k, ref el.faceplayer);
         }
     }
 }

@@ -171,7 +171,10 @@ public class Element
     [DefaultValue(0)] public int refActorObjectEffectMax = 0;
     [DefaultValue(false)] public bool refActorObjectEffectLastOnly = false;
     [DefaultValue(false)] public bool refActorUseTransformation = false;
+    [DefaultValue(false)] public bool refMark = false;
     [DefaultValue(0)] public int refActorTransformationID = 0;
+    [DefaultValue(0)] public int refMarkID = 0;
+    [DefaultValue(0)] public int faceplayer = 0;
 
     public bool ShouldSerializerefActorTransformationID()
     {

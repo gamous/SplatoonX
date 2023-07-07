@@ -558,6 +558,22 @@ unsafe partial class CGui
                     ImGui.SetNextItemWidth(100f);
                     ImGui.InputInt("##transid" + i + k, ref el.refActorTransformationID);
                 }
+                SImGuiEx.SizedText("头顶标记:".Loc(), WidthElement);
+                ImGui.SameLine();
+                ImGui.Checkbox("##marks" + i + k, ref el.refMark);
+                if (el.refMark)
+                {
+                    ImGui.SameLine();
+                    ImGui.SetNextItemWidth(100f);
+                    if (ImGui.InputInt("##marksid" + i + k, ref el.refMarkID))
+                    {
+                        if (el.refMarkID<=0||el.refMarkID>8)
+                        {
+                            el.refMarkID = 1;
+                        }
+                    }
+                    
+                }
             }
 
             if (el.type.EqualsAny(0, 2, 3, 5))
