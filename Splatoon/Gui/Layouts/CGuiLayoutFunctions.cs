@@ -48,7 +48,13 @@ internal partial class CGui
             ImGui.Checkbox("Face##" + i + k, ref el.FaceMe);
             ImGui.SameLine();
             ImGui.SetNextItemWidth(100f);
-            ImGui.InputInt("##face" + i + k, ref el.faceplayer);
+            if (ImGui.InputInt("##face" + i + k, ref el.faceplayer))
+            {
+                if (el.faceplayer<0||el.faceplayer>8)
+                {
+                    el.refMarkID = 0;
+                }
+            }
         }
     }
 }

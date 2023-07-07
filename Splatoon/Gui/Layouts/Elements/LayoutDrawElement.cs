@@ -567,9 +567,9 @@ unsafe partial class CGui
                     ImGui.SetNextItemWidth(100f);
                     if (ImGui.InputInt("##marksid" + i + k, ref el.refMarkID))
                     {
-                        if (el.refMarkID<=0||el.refMarkID>8)
+                        if (el.refMarkID<0||el.refMarkID>13)
                         {
-                            el.refMarkID = 1;
+                            el.refMarkID = 0;
                         }
                     }
                     
