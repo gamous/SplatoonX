@@ -949,7 +949,7 @@ public unsafe class Splatoon : IDalamudPlugin
             && (!e.refActorRequireCast || (e.refActorCastId.Count > 0 && a is BattleChara chr2 && IsCastingMatches(e, chr2) != e.refActorCastReverse))
             && (!e.refActorRequireBuff || (e.refActorBuffId.Count > 0 && a is BattleChara chr3 && CheckEffect(e, chr3)))
             && (!e.refActorUseTransformation || (a is BattleChara chr4 && CheckTransformationID(e, chr4)))
-            &&(!e.refMark|| Marking.HaveMark((uint)e.refMarkID))
+            &&(!e.refMark|| (a is BattleChara chr5 && Marking.HaveMark(chr5,(uint)e.refMarkID)))
             && (!e.LimitRotation || (a.Rotation >= e.RotationMax && a.Rotation <= e.RotationMin));
     }
 

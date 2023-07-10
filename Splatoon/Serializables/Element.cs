@@ -174,7 +174,7 @@ public class Element
     [DefaultValue(false)] public bool refMark = false;
     [DefaultValue(0)] public int refActorTransformationID = 0;
     [DefaultValue(0)] public int refMarkID = 0;
-    [DefaultValue(0)] public int faceplayer = 0;
+    [DefaultValue(1)] public int faceplayer = 1;
 
     public bool ShouldSerializerefActorTransformationID()
     {

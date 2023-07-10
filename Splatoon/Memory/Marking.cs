@@ -7,12 +7,23 @@ public class Marking
 {
     public unsafe static long GetMarker(uint index) => MarkingController.Instance()->MarkerArray[index];
 
-    public static bool HaveMark(uint index)
+    public unsafe static bool HaveMark(Character obj, uint index)
     {
-        if (Svc.ClientState.LocalPlayer.ObjectId == GetMarker(index))
+        if (obj.Struct()->ModelCharaId!=0)
         {
-            return true;
+            if (Svc.ClientState.LocalPlayer.ObjectId == GetMarker(index))
+            {
+                return true;
+            }
         }
+        else
+        {
+            if (obj.ObjectId == GetMarker(index))
+            {
+                return true;
+            }
+        }
+        
         return false;
     }
     private Dictionary<long, string> markers = new Dictionary<long, string>()
@@ -53,6 +64,6 @@ public class Marking
             var obj = Svc.Objects.CreateObjectReference((nint)ph);
             return obj;
         }
-        return null;
+        return Svc.ClientState.LocalPlayer;
     }
 }
