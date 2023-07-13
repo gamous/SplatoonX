@@ -565,14 +565,18 @@ unsafe partial class CGui
                 {
                     ImGui.SameLine();
                     ImGui.SetNextItemWidth(100f);
-                    if (ImGui.InputInt("##marksid" + i + k, ref el.refMarkID))
+                    string[] markOptions = { "攻击1", "攻击2", "攻击3", "攻击4", "攻击5", "锁链1", "锁链2", "锁链3", "禁止1", "禁止2", "方块", "圆圈", "十字", "三角"};
+                    if (ImGui.BeginCombo("##marks type" + i + k, markOptions[el.refMarkID]))
                     {
-                        if (el.refMarkID<0||el.refMarkID>13)
+                        for (int j = 0; j < markOptions.Length; j++)
                         {
-                            el.refMarkID = 0;
+                            if (ImGui.Selectable(markOptions[j]))
+                            {
+                                el.refMarkID = j;
+                            }
                         }
+                        ImGui.EndCombo();
                     }
-                    
                 }
             }
 

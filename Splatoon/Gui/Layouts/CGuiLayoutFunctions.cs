@@ -29,9 +29,10 @@ internal partial class CGui
         l = default;
         return false;
     }
-
+    
     static void DrawRotationSelector(Element el, string i, string k)
     {
+        string face = "";
         ImGui.SameLine();
         ImGuiEx.Text("Add angle:".Loc());
         ImGui.SameLine();
@@ -46,15 +47,25 @@ internal partial class CGui
         {
             ImGui.SameLine();
             ImGui.Checkbox("Face##" + i + k, ref el.FaceMe);
-            ImGui.SameLine();
-            ImGui.SetNextItemWidth(100f);
-            if (ImGui.InputInt("##face" + i + k, ref el.faceplayer))
+            if (el.FaceMe)
             {
-                if (el.faceplayer<0||el.faceplayer>8)
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100f);
+                string[] faceOptions = { "<1>", "<2>", "<3>", "<4>", "<5>", "<6>", "<7>", "<8>", "<t1>", "<t2>", "<h1>", "<h2>", "<d1>", "<d2>", "<d3>", "<d4>" };
+
+                if (ImGui.BeginCombo("Face chara##" + i + k, el.faceplayer))
                 {
-                    el.refMarkID = 0;
+                    foreach (string option in faceOptions)
+                    {
+                        if (ImGui.Selectable(option))
+                        {
+                            el.faceplayer = option;
+                        }
+                    }
+                    ImGui.EndCombo();
                 }
             }
+            
         }
     }
 }
